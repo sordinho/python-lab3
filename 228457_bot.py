@@ -1,4 +1,6 @@
 # Created by Davide Sordi in 07/04/2018 at 17.24
+import time
+
 from telegram import ChatAction
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
@@ -70,6 +72,7 @@ def help_the_noob(bot, received):
     :return:
     """
     bot.sendChatAction(received.message.chat_id, ChatAction.TYPING)
+    time.sleep(2)
     answer = "Here's a list of accepted commands:\n" \
              "/help I think you know what is\n" \
              "/showTasks will show you the tasks you have to do\n" \
@@ -111,6 +114,58 @@ def insert_new_task(bot, received, args):
     received.message.reply_text(answer)
 
 
+def remove_task(bot, received, args):
+    """
+    function who remove the specified task
+    :param bot:
+    :param received:
+    :param args:
+    :return:
+    """
+    bot.sendChatAction(received.message.chat_id, ChatAction.TYPING)
+    print(len(args))
+    if len(args) == 0:
+        answer = "You need to specify a task!!!"
+    else:
+        if len(args) == 1:
+            task_to_rem = "".join(args)
+        else:
+            task_to_rem = " ".join(args)
+        tasks.remove(task_to_rem)
+        answer = "Task deleted successfully"
+        save_on_file("new_task_list.txt")
+    received.message.reply_text(answer)
+
+
+def remove_all_tasks(bot, received, args):
+    """
+    this function will remove all tasks containing a string (args see below)
+    :param bot:
+    :param received:
+    :param args: this is a list containing the words of the user's message
+    :return:
+    """
+    bot.sendChatAction(received.message.chat_id, ChatAction.TYPING)
+    if len(args) == 0:
+        answer = "You need to specify a task!!!"
+    else:
+        deleted = list()
+        if len(args) == 1:
+            task_to_rem = "".join(args)
+        else:
+            task_to_rem = " ".join(args)
+        for task in tasks:
+            if task_to_rem in task:
+                tasks.remove(task)
+                deleted.append(task)
+        if len(deleted) == 0:
+            answer = "No tasks to delete"
+        else:
+            answer = "The elements " + " and ".join(deleted) + " were successfully removed"
+        save_on_file("new_task_list.txt")
+    received.message.reply_text(answer)
+
+
 def main():
     """
     Main function of the bot
@@ -136,7 +191,11 @@ def main():
     # insert new task command handler
     disp.add_handler(CommandHandler("newTask", insert_new_task, pass_args=True))
 
-    #TODO remove all tasks function and handler
+    # remove task command handler
+    disp.add_handler(CommandHandler("removeTask", remove_task, pass_args=True))
+
+    # remove all tasks handler
+    disp.add_handler(CommandHandler("removeAllTasks", remove_all_tasks, pass_args=True))
 
     # handler for unknown commands command is not iterable we use filterd messages
     disp.add_handler(MessageHandler(Filters.command, unknown_command))
