@@ -76,9 +76,9 @@ def help_the_noob(bot, received):
     answer = "Here's a list of accepted commands:\n" \
              "/help I think you know what is\n" \
              "/showTasks will show you the tasks you have to do\n" \
-             "newTask <task to add> insert a new task (remember /)\n" \
-             "removeTask <task to remove> (you need the exact name of the task)\n" \
-             "removeAllTasks <substring to search in a task to remove> "
+             "/newTask <task to add> insert a new task \n" \
+             "/removeTask <task to remove> (you need the exact name of the task)\n" \
+             "/removeAllTasks <substring to search in a task to remove> "
     received.message.reply_text(answer)
 
 
@@ -90,7 +90,11 @@ def show_tasks(bot, received):
     """
     bot.sendChatAction(received.message.chat_id, ChatAction.TYPING)
     if len(tasks) > 0:
-        answer = tasks
+        # answer formatted with \n
+        answer = ""
+        for task in tasks:
+            tmp1 = answer + task + "\n"
+            answer = tmp1
     else:
         answer = "Nothing to do."
     received.message.reply_text(answer)
