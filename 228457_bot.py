@@ -212,8 +212,11 @@ def main():
 
 
 # trying for first declaring task list as global variable
-tasks = read_from_file('task_list.txt')
+#tasks = read_from_file('task_list.txt')
 # tasks = ""
+#prova commento
 
 if __name__ == '__main__':
+    # trying now declaring task list as not too much global var
+    tasks = read_from_file('task_list.txt')
     main()
